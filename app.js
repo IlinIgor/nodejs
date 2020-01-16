@@ -1,0 +1,39 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+const db = require('./utils/DataBase.js');
+const usersLib = require('./lib/users');
+
+const app = express();
+
+db.setUpCollection();
+
+app.use(bodyParser.json());
+app.use(cors({ origin: '*' }));
+
+app.post('/user/create', function (req, res) {
+  usersLib.createUser(req.body)
+    .then(data => res.send(data))
+    .catch(err => {
+      res.status(500).send({error: err || '500 - server error'})
+    })
+});
+
+app.post('/user/remove', function (req, res) {
+  usersLib.removeUser(req.body)
+    .then(data => res.send(data))
+    .catch(err => {
+      res.status(500).send({error: err || '500 - server error'})
+    })
+});
+
+app.get('/users', function (req, res) {
+  usersLib.getAllUsers().then(function (data) { return res.send(data) })
+});
+
+app.listen(3000, function () {
+  console.log('Server running!');
+});
+
+module.exports = app;
