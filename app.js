@@ -12,15 +12,15 @@ db.setUpCollection();
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
 
-app.post('/user/create', function (req, res) {
+app.post('/users', function (req, res) {
   usersLib.createUser(req.body)
-    .then(data => res.send(data))
+    .then(data => res.status(201).send({ _id: data._id }))
     .catch(err => {
-      res.status(500).send({error: err || '500 - server error'})
+      res.status(err.status || 500).send({error: err || '500 - server error'})
     })
 });
 
-app.post('/user/remove', function (req, res) {
+app.delete('/users', function (req, res) {
   usersLib.removeUser(req.body)
     .then(data => res.send(data))
     .catch(err => {
@@ -29,7 +29,11 @@ app.post('/user/remove', function (req, res) {
 });
 
 app.get('/users', function (req, res) {
-  usersLib.getAllUsers().then(function (data) { return res.send(data) })
+  usersLib.getAllUsers()
+    .then(data => res.send(data))
+    .catch(err => {
+      res.status(500).send({error: err || '500 - server error'})
+    })
 });
 
 app.listen(3000, function () {

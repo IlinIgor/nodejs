@@ -12,34 +12,32 @@ describe('App', () => {
 
   it('should create a new user', async (done) => {
     const res = await request(app)
-      .post('/user/create')
+      .post('/users')
       .send({
         firstName: "John",
         lastName: "Smitt",
         email: "test@test.com"
       })
-    expect(res.statusCode).toEqual(200)
-    expect(res.body).toHaveProperty('firstName', 'John')
-    expect(res.body).toHaveProperty('lastName', 'Smitt')
-    expect(res.body).toHaveProperty('email', 'test@test.com')
+    expect(res.statusCode).toEqual(201)
+    expect(res.body).toHaveProperty('_id')
     done()
   })
 
   it('should return that user already exist', async (done) => {
     const res = await request(app)
-      .post('/user/create')
+      .post('/users')
       .send({
         firstName: "New",
         lastName: "Test",
         email: "test@test.com"
       })
-    expect(res.statusCode).toEqual(500)
+    expect(res.statusCode).toEqual(409)
     done()
   })
 
   it('should remove the user', async (done) => {
     const res = await request(app)
-      .post('/user/remove')
+      .delete('/users')
       .send({
         email: "test@test.com"
       })
